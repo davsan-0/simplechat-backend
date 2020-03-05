@@ -1,7 +1,6 @@
 package com.davsan.simplechat.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -9,31 +8,37 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
+@Table(name = "message")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="app_user")
-public class User {
+public class Message {
 
+    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false)
     @NotNull
     private UUID id;
 
-    @Column
+    @ManyToOne
+    @JoinColumn(name="author_id")
     @NotNull
-    private String name;
+    @JsonIgnoreProperties({"name", "chats", "createdAt", "modifiedAt"})
+    private User author;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "user_chat",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_id")
-    )
+    @ManyToOne
+    @JoinColumn(name="chat_id")
+    @NotNull
     @JsonIgnoreProperties({"participants", "createdAt", "modifiedAt"})
-    private Set<Chat> chats = new HashSet<>();
+    private Chat chat;
+
+    @Column(length = 255)
+    @NotNull
+    private String text;
 
     @Column(name = "created_date", updatable = false)
     @CreatedDate
@@ -44,8 +49,7 @@ public class User {
     @LastModifiedDate
     private Date modifiedAt;
 
-
-    public User() {
+    public Message() {
     }
 
     public UUID getId() {
@@ -56,12 +60,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 
     public Date getCreatedAt() {
@@ -80,38 +92,20 @@ public class User {
         this.modifiedAt = modifiedAt;
     }
 
-    public Set<Chat> getChats() {
-        return chats;
+    public String getText() {
+        return text;
     }
 
-    public void setChats(Set<Chat> chats) {
-        this.chats = chats;
-    }
-
-    public void addChat(Chat chat) {
-        chats.add(chat);
-        chat.getParticipants().add(this);
-    }
-
-    public void removeChat(Chat chat) {
-        chats.remove(chat);
-        chat.getParticipants().remove(this);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id.equals(user.id);
+        Message message = (Message) o;
+        return id.equals(message.id);
     }
 
     @Override

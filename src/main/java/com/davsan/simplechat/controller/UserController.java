@@ -48,7 +48,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public User updateUser(@RequestBody User user) {
         Preconditions.checkNotNull(user);
-
         return userService.updateUserWithId(user.getId(), user);
     }
 }

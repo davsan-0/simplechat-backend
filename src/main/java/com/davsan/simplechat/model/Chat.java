@@ -1,5 +1,6 @@
 package com.davsan.simplechat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -7,9 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -23,8 +22,9 @@ public class Chat {
     @NotNull
     private UUID id;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "chats")
-    private List<User> participants;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "chats")
+    @JsonIgnoreProperties({"chats", "createdAt", "modifiedAt"})
+    private Set<User> participants = new HashSet<>();
 
     @Column(name = "created_date", updatable = false)
     @NotNull
@@ -47,11 +47,11 @@ public class Chat {
         this.id = id;
     }
 
-    public List<User> getParticipants() {
+    public Set<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<User> participants) {
+    public void setParticipants(Set<User> participants) {
         this.participants = participants;
     }
 
@@ -69,5 +69,28 @@ public class Chat {
 
     public void setModifiedAt(Date modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+    public void addUser(User user) {
+        participants.add(user);
+        user.getChats().add(this);
+    }
+
+    public void removeUser(User user) {
+        participants.remove(user);
+        user.getChats().remove(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Chat chat = (Chat) o;
+        return id.equals(chat.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
