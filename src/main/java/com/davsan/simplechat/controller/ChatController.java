@@ -8,11 +8,16 @@ import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.service.ChatService;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = {"*"})
@@ -32,12 +37,21 @@ public class ChatController {
         return chatService.findById(id);
     }
 
+    @GetMapping("{chat_id}/messages")
+    public List<MessageDTO> getMessagesFromChatSinceDate(@PathVariable("chat_id") UUID chatId, @RequestParam(required = false) String since) {
+        if (since == null) {
+            return chatService.getMessagesFromChat(chatId).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
+        }
+
+        LocalDateTime ldt  = LocalDateTime.parse(since, DateTimeFormatter.ISO_DATE_TIME);
+        return chatService.getMessagesFromChatAfterDate(chatId, ldt).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Chat createChat(@RequestBody Chat chat)
+    public void createChat(@RequestBody List<UUID> userIds)
     {
-        Preconditions.checkNotNull(chat);
-        return chatService.saveChat(chat);
+        chatService.createChat(userIds);
     }
 
     @PostMapping("{chat_id}/messages")

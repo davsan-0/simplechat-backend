@@ -1,5 +1,6 @@
 package com.davsan.simplechat.service;
 
+import com.davsan.simplechat.error.ResourceNotFoundException;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserService {
     }
 
     public User findById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"); });
+        return userRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("User " + id.toString() + " not found"); });
     }
 
 
@@ -41,7 +42,7 @@ public class UserService {
 
     public User updateUserWithId(UUID id, User user) {
         try {
-            User userToUpdate = userRepository.findById(id).orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"); });
+            User userToUpdate = userRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("User not found"); });
 
             if (user.getName() != null) userToUpdate.setName(user.getName());
 

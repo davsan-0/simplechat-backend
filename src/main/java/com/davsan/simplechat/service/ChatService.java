@@ -1,6 +1,6 @@
 package com.davsan.simplechat.service;
 
-import com.davsan.simplechat.dto.MessageDTO;
+import com.davsan.simplechat.error.ResourceNotFoundException;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.model.User;
@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,13 +24,21 @@ public class ChatService {
     ChatRepository chatRepository;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     MessageRepository messageRepository;
 
     @Autowired
     UserService userService;
+
+    public void createChat(List<UUID> userIds) {
+        Chat chat = new Chat();
+
+        for (UUID userId : userIds) {
+            User user = userService.findById(userId);
+            chat.addUser(user);
+        }
+
+        chatRepository.saveAndFlush(chat);
+    }
 
     public Chat saveChat(Chat chat) {
         try {
@@ -41,14 +49,21 @@ public class ChatService {
         }
     }
 
-
-
     public List<Chat> findAll() {
         return chatRepository.findAll();
     }
 
     public Chat findById(UUID id) {
-        return chatRepository.findById(id).orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat " + id.toString() + " not found"); });
+        return chatRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + id.toString() + " not found"); });
+    }
+
+    public List<Message> getMessagesFromChat(UUID chatId) {
+        return messageRepository.findByChat_idOrderByCreatedAtDesc(chatId).orElseThrow(() -> { throw new ResourceNotFoundException("Error"); });
+    }
+
+    public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date) {
+        //return messageRepository.findByChat_idAndCreatedAtGreaterThanOrderByCreatedAtDesc(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
+        return messageRepository.findAllMessagesAfterDate(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
     }
 
     public void postMessageToChat(Message message) {
@@ -63,7 +78,7 @@ public class ChatService {
         Chat chat = findById(chatId);
 
         for (UUID userId : userIds) {
-            User user = userRepository.findById(userId).orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + userId.toString() + " not found"); });
+            User user = userService.findById(userId);
             chat.addUser(user);
         }
 
