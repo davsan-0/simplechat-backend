@@ -1,5 +1,6 @@
 package com.davsan.simplechat.controller;
 
+import com.davsan.simplechat.dto.ChatDTO;
 import com.davsan.simplechat.dto.Mapper;
 import com.davsan.simplechat.dto.MessageDTO;
 import com.davsan.simplechat.model.Chat;
@@ -33,8 +34,8 @@ public class ChatController {
     }
 
     @GetMapping("{id}")
-    public Chat getChatById(@PathVariable UUID id) {
-        return chatService.findById(id);
+    public ChatDTO getChatById(@PathVariable UUID id) {
+        return chatService.findByIdReturnDTO(id);
     }
 
     @GetMapping("{chat_id}/messages")

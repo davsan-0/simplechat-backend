@@ -2,6 +2,7 @@ package com.davsan.simplechat.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -44,7 +45,6 @@ public class User {
     @Column(name = "modified_date")
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-
 
     public User() {
     }

@@ -1,5 +1,7 @@
 package com.davsan.simplechat.service;
 
+import com.davsan.simplechat.dto.ChatDTO;
+import com.davsan.simplechat.dto.Mapper;
 import com.davsan.simplechat.error.ResourceNotFoundException;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
@@ -57,6 +59,13 @@ public class ChatService {
         return chatRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + id.toString() + " not found"); });
     }
 
+    public ChatDTO findByIdReturnDTO(UUID id) {
+        Chat chat = chatRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + id.toString() + " not found"); });
+        Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(chat.getId());
+
+        return Mapper.ChatToDTO(chat, latestMessage);
+    }
+
     public List<Message> getMessagesFromChat(UUID chatId) {
         return messageRepository.findByChat_idOrderByCreatedAtDesc(chatId).orElseThrow(() -> { throw new ResourceNotFoundException("Error"); });
     }
@@ -64,6 +73,10 @@ public class ChatService {
     public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date) {
         //return messageRepository.findByChat_idAndCreatedAtGreaterThanOrderByCreatedAtDesc(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
         return messageRepository.findAllMessagesAfterDate(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
+    }
+
+    public List<Chat> getChatsContainingUser(UUID userId) {
+        return chatRepository.findByParticipants_IdEquals(userId);
     }
 
     public void postMessageToChat(Message message) {

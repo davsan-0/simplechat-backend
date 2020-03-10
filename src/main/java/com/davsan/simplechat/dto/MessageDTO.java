@@ -6,11 +6,14 @@ import java.util.UUID;
 
 public class MessageDTO {
     private UUID id;
-    private UUID author;
+    private UserDTO author;
     private UUID chatId;
     private String text;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
+    public MessageDTO() {
+    }
 
     public UUID getId() {
         return id;
@@ -20,11 +23,11 @@ public class MessageDTO {
         this.id = id;
     }
 
-    public UUID getAuthor() {
+    public UserDTO getAuthor() {
         return author;
     }
 
-    public void setAuthor(UUID author) {
+    public void setAuthor(UserDTO author) {
         this.author = author;
     }
 

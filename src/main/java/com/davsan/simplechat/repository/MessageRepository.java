@@ -19,4 +19,6 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
     Optional<List<Message>> findAllMessagesAfterDate(UUID chatId, LocalDateTime date);
 
     Optional<List<Message>> findByChat_idOrderByCreatedAtDesc(UUID chatId);
+
+    Message findFirst1ByChat_idOrderByCreatedAtDesc(UUID chatId);
 }

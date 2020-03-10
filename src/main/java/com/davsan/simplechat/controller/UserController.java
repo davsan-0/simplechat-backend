@@ -1,6 +1,8 @@
 package com.davsan.simplechat.controller;
 
+import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.User;
+import com.davsan.simplechat.service.ChatService;
 import com.davsan.simplechat.service.UserService;
 import com.davsan.simplechat.utils.RestPreconditions;
 import com.google.common.base.Preconditions;
@@ -20,6 +22,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ChatService chatService;
+
     @GetMapping
     public List<User> getUsers() {
         return userService.findAll();
@@ -28,6 +33,11 @@ public class UserController {
     @GetMapping("{id}")
     public User getUserById(@PathVariable UUID id) {
         return userService.findById(id);
+    }
+
+    @GetMapping("{id}/chats")
+    public List<Chat> getChatsWithUser(@PathVariable UUID id) {
+        return chatService.getChatsContainingUser(id);
     }
 
     @PostMapping

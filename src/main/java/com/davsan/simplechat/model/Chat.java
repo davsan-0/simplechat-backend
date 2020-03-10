@@ -1,6 +1,7 @@
 package com.davsan.simplechat.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -23,6 +24,9 @@ public class Chat {
     @NotNull
     private UUID id;
 
+    @Column(updatable = true, nullable = true)
+    private String name;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "chats")
     @JsonIgnoreProperties({"chats", "createdAt", "modifiedAt"})
     private Set<User> participants = new HashSet<>();
@@ -36,7 +40,6 @@ public class Chat {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-
     public Chat() {
     }
 
@@ -46,6 +49,14 @@ public class Chat {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<User> getParticipants() {
@@ -71,6 +82,14 @@ public class Chat {
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
+
+   /* public Message getLatestMessage() {
+        return latestMessage;
+    }
+
+    public void setLatestMessage(Message latestMessage) {
+        this.latestMessage = latestMessage;
+    }*/
 
     public void addUser(User user) {
         participants.add(user);
