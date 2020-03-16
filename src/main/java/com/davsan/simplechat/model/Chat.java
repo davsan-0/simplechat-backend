@@ -59,6 +59,10 @@ public class Chat {
         this.name = name;
     }
 
+    /**
+     * Retrieves all the users that are part of this chat
+     * @return a set of all users in the chat
+     */
     public Set<User> getParticipants() {
         return participants;
     }
@@ -91,11 +95,19 @@ public class Chat {
         this.latestMessage = latestMessage;
     }*/
 
+    /**
+     * Adds a user as a participant to this chat
+     * @param user the user to add to this chat
+     */
     public void addUser(User user) {
         participants.add(user);
         user.getChats().add(this);
     }
 
+    /**
+     * Removes a user from this chat
+     * @param user the user to remove from this chat
+     */
     public void removeUser(User user) {
         participants.remove(user);
         user.getChats().remove(this);

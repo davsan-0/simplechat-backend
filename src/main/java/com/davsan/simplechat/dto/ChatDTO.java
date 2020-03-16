@@ -6,6 +6,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * This is the Data Transfer Object class of the model class Chat which is used to separate what is returned to a client and what is stored in the database
+ *
+ * @author David Sandström
+ */
 public class ChatDTO {
     private UUID id;
     private String name;

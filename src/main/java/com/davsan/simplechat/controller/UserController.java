@@ -1,5 +1,6 @@
 package com.davsan.simplechat.controller;
 
+import com.davsan.simplechat.dto.ChatDTO;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.service.ChatService;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("{id}/chats")
-    public List<Chat> getChatsWithUser(@PathVariable UUID id) {
+    public List<ChatDTO> getChatsWithUser(@PathVariable UUID id) {
         return chatService.getChatsContainingUser(id);
     }
 

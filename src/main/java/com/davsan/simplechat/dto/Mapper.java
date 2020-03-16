@@ -4,42 +4,47 @@ import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.model.User;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * This class maps models to DTOs and vice-versa.
+ *
+ * @author David Sandström
+ */
 public class Mapper {
 
 
     public static MessageDTO MessageToDTO(Message message) {
-        MessageDTO dto = new MessageDTO();
+        if (message == null) return null;
 
-        dto.setId(message.getId());
-        dto.setAuthor(UserToDTOSimple(message.getAuthor()));
-        if (message.getChat() != null) dto.setChatId(message.getChat().getId());
-        dto.setText(message.getText());
-        dto.setCreatedAt(message.getCreatedAt());
-        dto.setModifiedAt(message.getModifiedAt());
-
-        return dto;
+        return MessageDTO.builder()
+                .id(message.getId())
+                .author(UserToDTOSimple(message.getAuthor()))
+                .chatId(message.getChat().getId())
+                .text(message.getText())
+                .createdAt(message.getCreatedAt())
+                .modifiedAt(message.getModifiedAt())
+                .build();
     }
 
     public static Message DTOToMessage(MessageDTO dto) {
-        Message message = new Message();
-
-        if (dto.getId() != null) message.setId(dto.getId());
-
         User user = new User();
         user.setId(dto.getAuthor().getId());
-        message.setAuthor(user);
 
         Chat chat = new Chat();
         chat.setId(dto.getChatId());
-        message.setChat(chat);
 
-        message.setText(dto.getText());
-        message.setCreatedAt(dto.getCreatedAt());
-        message.setModifiedAt(dto.getModifiedAt());
+        return Message.builder()
+                .id(dto.getId())
+                .author(user)
+                .chat(chat)
+                .text(dto.getText())
+                .createdAt(dto.getCreatedAt())
+                .modifiedAt(dto.getModifiedAt())
+                .build();
 
-        return message;
+        //if (dto.getId() != null) message.setId(dto.getId());
     }
 
     // TODO: Implement
@@ -48,12 +53,10 @@ public class Mapper {
     }
 
     public static UserDTO UserToDTOSimple(User user) {
-        UserDTO dto = new UserDTO();
-
-        dto.setId(user.getId());
-        dto.setName(user.getName());
-
-        return dto;
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
     }
 
     public static ChatDTO ChatToDTO(Chat chat) {
@@ -71,8 +74,8 @@ public class Mapper {
     public static ChatDTO ChatToDTO(Chat chat, Message latestMessage) {
         ChatDTO dto = ChatToDTO(chat);
 
-        latestMessage.setChat(null); // Don't need to send the chat id back
-        dto.setLatestMessage(MessageToDTO(latestMessage));
+        MessageDTO latestMessageDTO = MessageToDTO(latestMessage);
+        dto.setLatestMessage(latestMessageDTO);
 
         return dto;
     }

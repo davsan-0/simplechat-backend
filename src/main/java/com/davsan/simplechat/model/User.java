@@ -1,5 +1,7 @@
 package com.davsan.simplechat.model;
 
+import com.davsan.simplechat.dto.ChatDTO;
+import com.davsan.simplechat.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Formula;
@@ -81,6 +83,10 @@ public class User {
         this.modifiedAt = modifiedAt;
     }
 
+    /**
+     * Retrieves chats that this User is participating in
+     * @return a set of all chats
+     */
     public Set<Chat> getChats() {
         return chats;
     }
@@ -89,14 +95,26 @@ public class User {
         this.chats = chats;
     }
 
+    /**
+     * Adds this User as a participant of a Chat
+     * @param chat the Chat to add this User to
+     */
     public void addChat(Chat chat) {
         chats.add(chat);
         chat.getParticipants().add(this);
     }
 
+    /**
+     * Removes this User as a participant of a Chat
+     * @param chat the Chat to remove this User from
+     */
     public void removeChat(Chat chat) {
         chats.remove(chat);
         chat.getParticipants().remove(this);
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
     }
 
     @Override
@@ -118,5 +136,53 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static class UserBuilder {
+        private UUID id;
+        private String name;
+        private Set<Chat> chats;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
+
+        public UserBuilder() {
+        }
+
+        public UserBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public UserBuilder chats(Set<Chat> chats) {
+            this.chats = chats;
+            return this;
+        }
+
+        public UserBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public UserBuilder modifiedAt(LocalDateTime modifiedAt) {
+            this.modifiedAt = modifiedAt;
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+
+            user.setId(this.id);
+            user.setName(this.name);
+            user.setChats(this.chats);
+            user.setCreatedAt(this.createdAt);
+            user.setModifiedAt(this.modifiedAt);
+
+            return user;
+        }
     }
 }

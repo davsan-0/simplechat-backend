@@ -11,8 +11,5 @@ import java.util.UUID;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, UUID> {
 
-   // @Query(value = "SELECT chat_id FROM user_chat WHERE ", nativeQuery = true)
-    //List<Chat> getChatsContainingUser(UUID userId);
-
     List<Chat> findByParticipants_IdEquals(UUID userId);
 }

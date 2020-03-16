@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "last_read")

@@ -1,5 +1,7 @@
 package com.davsan.simplechat.model;
 
+import com.davsan.simplechat.dto.MessageDTO;
+import com.davsan.simplechat.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -101,6 +103,10 @@ public class Message {
         this.text = text;
     }
 
+    public static MessageBuilder builder() {
+        return new MessageBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,5 +118,60 @@ public class Message {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static class MessageBuilder {
+        private UUID id;
+        private User author;
+        private Chat chat;
+        private String text;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
+
+        public MessageBuilder() {
+        }
+
+        public MessageBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
+
+        public MessageBuilder author(User author) {
+            this.author = author;
+            return this;
+        }
+
+        public MessageBuilder chat(Chat chat) {
+            this.chat = chat;
+            return this;
+        }
+
+        public MessageBuilder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public MessageBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public MessageBuilder modifiedAt(LocalDateTime modifiedAt) {
+            this.modifiedAt = modifiedAt;
+            return this;
+        }
+
+        public Message build() {
+            Message message = new Message();
+
+            message.setId(this.id);
+            message.setAuthor(this.author);
+            message.setChat(this.chat);
+            message.setText(this.text);
+            message.setCreatedAt(this.createdAt);
+            message.setModifiedAt(this.modifiedAt);
+
+            return message;
+        }
     }
 }

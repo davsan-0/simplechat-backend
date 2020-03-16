@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,9 +60,9 @@ public class ChatService {
         return chatRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + id.toString() + " not found"); });
     }
 
-    public ChatDTO findByIdReturnDTO(UUID id) {
+    public ChatDTO findByIdAndReturnDTO(UUID id) {
         Chat chat = chatRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + id.toString() + " not found"); });
-        Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(chat.getId());
+        Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(id);
 
         return Mapper.ChatToDTO(chat, latestMessage);
     }
@@ -75,8 +76,18 @@ public class ChatService {
         return messageRepository.findAllMessagesAfterDate(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
     }
 
-    public List<Chat> getChatsContainingUser(UUID userId) {
-        return chatRepository.findByParticipants_IdEquals(userId);
+    public List<ChatDTO> getChatsContainingUser(UUID userId) {
+        List<Chat> chatList = chatRepository.findByParticipants_IdEquals(userId);
+        List<ChatDTO> dtoList = new ArrayList<>();
+
+        for (Chat chat : chatList) {
+            Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(chat.getId());
+            ChatDTO dto = Mapper.ChatToDTO(chat, latestMessage);
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
     public void postMessageToChat(Message message) {

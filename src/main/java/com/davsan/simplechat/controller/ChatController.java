@@ -5,17 +5,13 @@ import com.davsan.simplechat.dto.Mapper;
 import com.davsan.simplechat.dto.MessageDTO;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
-import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.service.ChatService;
-import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,7 +31,7 @@ public class ChatController {
 
     @GetMapping("{id}")
     public ChatDTO getChatById(@PathVariable UUID id) {
-        return chatService.findByIdReturnDTO(id);
+        return chatService.findByIdAndReturnDTO(id);
     }
 
     @GetMapping("{chat_id}/messages")
