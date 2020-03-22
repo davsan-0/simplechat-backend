@@ -7,3 +7,6 @@ spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 spring.jackson.default-property-inclusion = NON_NULL
+google.client.id=409708898302-vl10ip96lo2fav7ia658s7o1a658c6sn.apps.googleusercontent.com
+
+spring.security.oauth2.client.registration.google.

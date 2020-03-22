@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/simplechatdb
+    username: simplechat
+    password: simplechat
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  jackson:
+    default-property-inclusion: NON_NULL
+  security:
+    jwt:
+      token:
+        secret-key: secret-key
+        expire-length: 864000000
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 409708898302-vl10ip96lo2fav7ia658s7o1a658c6sn.apps.googleusercontent.com

@@ -13,6 +13,7 @@ import java.util.UUID;
 public class UserDTO {
     private UUID id;
     private String name;
+    private String imageUrl;
     private Set<ChatDTO> chats;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
@@ -38,6 +39,14 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Set<ChatDTO> getChats() {
@@ -69,6 +78,14 @@ public class UserDTO {
     }
 
     @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -84,6 +101,7 @@ public class UserDTO {
     public static class UserDTOBuilder {
         private UUID id;
         private String name;
+        private String imageUrl;
         private Set<ChatDTO> chats;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
@@ -98,6 +116,11 @@ public class UserDTO {
 
         public UserDTOBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public UserDTOBuilder imageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
             return this;
         }
 
@@ -121,6 +144,7 @@ public class UserDTO {
 
             dto.setId(this.id);
             dto.setName(this.name);
+            dto.setImageUrl(this.imageUrl);
             dto.setChats(this.chats);
             dto.setCreatedAt(this.createdAt);
             dto.setModifiedAt(this.modifiedAt);

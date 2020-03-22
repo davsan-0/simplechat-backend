@@ -4,6 +4,8 @@ import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.model.User;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,15 +49,22 @@ public class Mapper {
         //if (dto.getId() != null) message.setId(dto.getId());
     }
 
-    // TODO: Implement
     public static UserDTO UserToDTO(User user) {
-        return new UserDTO();
+        Set<Chat> chats = user.getChats();
+        Set<ChatDTO> chatDTOs = chats.stream().map(Mapper::ChatToDTO).collect(Collectors.toSet());
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .imageUrl(user.getImageUrl())
+                .chats(chatDTOs)
+                .build();
     }
 
     public static UserDTO UserToDTOSimple(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .name(user.getName())
+                .imageUrl(user.getImageUrl())
                 .build();
     }
 

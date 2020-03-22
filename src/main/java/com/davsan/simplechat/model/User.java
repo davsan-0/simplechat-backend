@@ -27,9 +27,19 @@ public class User {
     @NotNull
     private UUID id;
 
+    @Column(name = "provider_id", length = 128, unique = true)
+    private String providerId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     @Column
     @NotNull
     private String name;
+
+    @Column
+    private String imageUrl;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "user_chat",
@@ -95,6 +105,30 @@ public class User {
         this.chats = chats;
     }
 
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     /**
      * Adds this User as a participant of a Chat
      * @param chat the Chat to add this User to
@@ -142,6 +176,9 @@ public class User {
         private UUID id;
         private String name;
         private Set<Chat> chats;
+        private String providerId;
+        private Provider provider;
+        private String imageUrl;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
 
@@ -163,6 +200,21 @@ public class User {
             return this;
         }
 
+        public UserBuilder providerId(String providerId) {
+            this.providerId = providerId;
+            return this;
+        }
+
+        public UserBuilder provider(Provider provider) {
+            this.provider = provider;
+            return this;
+        }
+
+        public UserBuilder imageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+            return this;
+        }
+
         public UserBuilder createdAt(LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -179,6 +231,9 @@ public class User {
             user.setId(this.id);
             user.setName(this.name);
             user.setChats(this.chats);
+            user.setProviderId(this.providerId);
+            user.setProvider(this.provider);
+            user.setImageUrl(this.imageUrl);
             user.setCreatedAt(this.createdAt);
             user.setModifiedAt(this.modifiedAt);
 

@@ -1,6 +1,9 @@
 package com.davsan.simplechat.service;
 
+import com.davsan.simplechat.dto.Mapper;
+import com.davsan.simplechat.dto.UserDTO;
 import com.davsan.simplechat.error.ResourceNotFoundException;
+import com.davsan.simplechat.model.Provider;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,10 +35,23 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public UserDTO findByIdReturnDTO(UUID id) {
+        return Mapper.UserToDTO(findById(id));
+    }
+
     public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> { throw new ResourceNotFoundException("User " + id.toString() + " not found"); });
     }
 
+    public User findByProviderId(String providerId, Provider provider) {
+        Optional<User> user = userRepository.findByProviderIdAndProvider(providerId, provider);
+
+        if (user.isPresent()) {
+            return user.get();
+        }
+
+        return null;
+    }
 
     public void deleteUserById(UUID id) {
         userRepository.deleteById(id);
