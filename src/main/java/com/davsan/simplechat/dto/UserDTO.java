@@ -21,6 +21,10 @@ public class UserDTO {
     public UserDTO() {
     }
 
+    public UserDTO(UUID id) {
+        this.id = id;
+    }
+
     public UserDTO(String id) {
         this.id = UUID.fromString(id);
     }

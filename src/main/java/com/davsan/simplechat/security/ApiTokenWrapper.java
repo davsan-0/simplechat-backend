@@ -10,6 +10,9 @@ public class ApiTokenWrapper {
     @JsonProperty("access_token")
     private String accessToken;
 
+    @JsonProperty("token_type")
+    private String tokenType = "Bearer";
+
     @JsonProperty("refresh_token")
     private String refreshToken;
 

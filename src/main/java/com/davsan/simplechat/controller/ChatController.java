@@ -3,13 +3,17 @@ package com.davsan.simplechat.controller;
 import com.davsan.simplechat.dto.ChatDTO;
 import com.davsan.simplechat.dto.Mapper;
 import com.davsan.simplechat.dto.MessageDTO;
+import com.davsan.simplechat.dto.UserDTO;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,13 +38,15 @@ public class ChatController {
     }
 
     @GetMapping("{chat_id}/messages")
-    public List<MessageDTO> getMessagesFromChatSinceDate(@PathVariable("chat_id") UUID chatId, @RequestParam(required = false) String since) {
+    public List<MessageDTO> getMessagesFromChatSinceDate(@PathVariable("chat_id") UUID chatId, @RequestParam(required = false) String since, @RequestParam(required = false) String sort) {
+        Sort.Direction sortDir = Sort.Direction.fromOptionalString(sort).orElse(Sort.Direction.ASC);
+
         if (since == null) {
-            return chatService.getMessagesFromChat(chatId).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
+            return chatService.getMessagesFromChat(chatId, sortDir).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
         }
 
         LocalDateTime ldt  = LocalDateTime.parse(since, DateTimeFormatter.ISO_DATE_TIME);
-        return chatService.getMessagesFromChatAfterDate(chatId, ldt).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
+        return chatService.getMessagesFromChatAfterDate(chatId, ldt, sortDir).stream().map(Mapper::MessageToDTO).collect(Collectors.toList());
     }
 
     @PostMapping
@@ -52,7 +58,17 @@ public class ChatController {
 
     @PostMapping("{chat_id}/messages")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postMessageToChat(@PathVariable("chat_id") UUID chatId, @RequestBody MessageDTO message) {
+    public void postMessageToChat(@PathVariable("chat_id") UUID chatId, @RequestBody MessageDTO message) throws AccessDeniedException {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Chat chat = chatService.findById(chatId);
+        boolean isParticipant = chat.getParticipants().stream().anyMatch(user -> user.getId().equals(userId));
+
+        if (!isParticipant) {
+            throw new AccessDeniedException("Access Denied.");
+        }
+
+        message.setAuthor(new UserDTO(userId));
         message.setChatId(chatId);
         Message entity = Mapper.DTOToMessage(message);
         chatService.postMessageToChat(entity);

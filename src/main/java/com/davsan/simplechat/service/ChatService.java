@@ -11,6 +11,7 @@ import com.davsan.simplechat.repository.MessageRepository;
 import com.davsan.simplechat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -67,13 +68,13 @@ public class ChatService {
         return Mapper.ChatToDTO(chat, latestMessage);
     }
 
-    public List<Message> getMessagesFromChat(UUID chatId) {
-        return messageRepository.findByChat_idOrderByCreatedAtDesc(chatId).orElseThrow(() -> { throw new ResourceNotFoundException("Error"); });
+    public List<Message> getMessagesFromChat(UUID chatId, Sort.Direction sortDir) {
+        return messageRepository.findByChat_id(chatId, Sort.by(sortDir, "createdAt")).orElseThrow(() -> { throw new ResourceNotFoundException("Error"); });
     }
 
-    public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date) {
+    public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir) {
         //return messageRepository.findByChat_idAndCreatedAtGreaterThanOrderByCreatedAtDesc(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
-        return messageRepository.findAllMessagesAfterDate(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
+        return messageRepository.findAllMessagesAfterDate(chatId, date, sortDir).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
     }
 
     public List<ChatDTO> getChatsContainingUser(UUID userId) {

@@ -27,3 +27,5 @@ spring:
         registration:
           google:
             clientId: 409708898302-vl10ip96lo2fav7ia658s7o1a658c6sn.apps.googleusercontent.com
+cors:
+  allowed-origins: *

@@ -100,7 +100,7 @@ public class AuthController {
                 System.out.println("Invalid ID token.");
             }
         } catch (Exception e) {
-            System.out.println("error");
+            e.printStackTrace();
         }
         return null; //TODO: Should return info to client
     }

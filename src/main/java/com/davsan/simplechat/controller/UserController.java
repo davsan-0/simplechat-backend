@@ -34,9 +34,14 @@ public class UserController {
 
     @GetMapping("me")
     public UserDTO getMe() {
-//        UserDTO user = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UUID id = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.findByIdReturnDTO(id);
+    }
+
+    @GetMapping("me/chats")
+    public List<ChatDTO> getMyChats() {
+        UUID id = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return chatService.getChatsContainingUser(id);
     }
 
     @GetMapping("{id}")
