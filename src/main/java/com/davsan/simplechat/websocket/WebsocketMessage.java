@@ -5,6 +5,7 @@ import java.util.UUID;
 public class WebsocketMessage {
 
     private UUID userId;
+    private String name;
     private String text;
 
     public WebsocketMessage() {
@@ -24,5 +25,13 @@ public class WebsocketMessage {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

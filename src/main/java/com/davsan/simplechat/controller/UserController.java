@@ -2,15 +2,12 @@ package com.davsan.simplechat.controller;
 
 import com.davsan.simplechat.dto.ChatDTO;
 import com.davsan.simplechat.dto.UserDTO;
-import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.service.ChatService;
 import com.davsan.simplechat.service.UserService;
-import com.davsan.simplechat.utils.RestPreconditions;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +25,11 @@ public class UserController {
     ChatService chatService;
 
     @GetMapping
-    public List<User> getUsers() {
-        return userService.findAll();
+    public List<UserDTO> getUsers(@RequestParam(required = false) String search) {
+        if (search == null) {
+            return userService.findAll();
+        }
+        return userService.findByNameContaining(search);
     }
 
     @GetMapping("me")
@@ -48,6 +48,7 @@ public class UserController {
     public User getUserById(@PathVariable UUID id) {
         return userService.findById(id);
     }
+
 
     @GetMapping("{id}/chats")
     public List<ChatDTO> getChatsWithUser(@PathVariable UUID id) {

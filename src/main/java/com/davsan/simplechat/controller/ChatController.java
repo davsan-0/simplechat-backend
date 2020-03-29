@@ -1,9 +1,6 @@
 package com.davsan.simplechat.controller;
 
-import com.davsan.simplechat.dto.ChatDTO;
-import com.davsan.simplechat.dto.Mapper;
-import com.davsan.simplechat.dto.MessageDTO;
-import com.davsan.simplechat.dto.UserDTO;
+import com.davsan.simplechat.dto.*;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.service.ChatService;
@@ -51,9 +48,10 @@ public class ChatController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createChat(@RequestBody List<UUID> userIds)
-    {
-        chatService.createChat(userIds);
+    public void createChat(@RequestBody SimpleChatDTO chat) {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        chat.getParticipants().add(userId);
+        chatService.createChat(chat);
     }
 
     @PostMapping("{chat_id}/messages")

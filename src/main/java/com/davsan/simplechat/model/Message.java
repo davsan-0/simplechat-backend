@@ -2,8 +2,11 @@ package com.davsan.simplechat.model;
 
 import com.davsan.simplechat.dto.MessageDTO;
 import com.davsan.simplechat.dto.UserDTO;
+import com.davsan.simplechat.utils.AttributeEncryptor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -41,6 +44,7 @@ public class Message {
 
     @Column(length = 255)
     @NotNull
+    @Convert(converter = AttributeEncryptor.class)
     private String text;
 
     @Column(name = "created_date", updatable = false)

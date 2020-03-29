@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,8 +32,8 @@ public class UserService {
         }
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream().map(Mapper::UserToDTOSimple).collect(Collectors.toList());
     }
 
     public UserDTO findByIdReturnDTO(UUID id) {
@@ -51,6 +52,10 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public List<UserDTO> findByNameContaining(String search) {
+        return userRepository.findByNameContainingIgnoreCase(search).stream().map(Mapper::UserToDTOSimple).collect(Collectors.toList());
     }
 
     public void deleteUserById(UUID id) {

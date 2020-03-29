@@ -19,7 +19,7 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
     @Query(value = "SELECT * FROM message WHERE chat_id = ?1 AND created_date > ?2 ORDER BY created_date ?3", nativeQuery = true)
     Optional<List<Message>> findAllMessagesAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir);
 
-    Optional<List<Message>> findByChat_id(UUID chatId, Sort sort);
+    List<Message> findByChat_id(UUID chatId, Sort sort);
 
     Message findFirst1ByChat_idOrderByCreatedAtDesc(UUID chatId);
 }

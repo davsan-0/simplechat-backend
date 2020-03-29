@@ -2,6 +2,7 @@ package com.davsan.simplechat.service;
 
 import com.davsan.simplechat.dto.ChatDTO;
 import com.davsan.simplechat.dto.Mapper;
+import com.davsan.simplechat.dto.SimpleChatDTO;
 import com.davsan.simplechat.error.ResourceNotFoundException;
 import com.davsan.simplechat.model.Chat;
 import com.davsan.simplechat.model.Message;
@@ -33,10 +34,11 @@ public class ChatService {
     @Autowired
     UserService userService;
 
-    public void createChat(List<UUID> userIds) {
+    public void createChat(SimpleChatDTO chatDTO) {
         Chat chat = new Chat();
+        chat.setName(chatDTO.getName());
 
-        for (UUID userId : userIds) {
+        for (UUID userId : chatDTO.getParticipants()) {
             User user = userService.findById(userId);
             chat.addUser(user);
         }
@@ -69,11 +71,10 @@ public class ChatService {
     }
 
     public List<Message> getMessagesFromChat(UUID chatId, Sort.Direction sortDir) {
-        return messageRepository.findByChat_id(chatId, Sort.by(sortDir, "createdAt")).orElseThrow(() -> { throw new ResourceNotFoundException("Error"); });
+        return messageRepository.findByChat_id(chatId, Sort.by(sortDir, "createdAt"));
     }
 
     public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir) {
-        //return messageRepository.findByChat_idAndCreatedAtGreaterThanOrderByCreatedAtDesc(chatId, date).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
         return messageRepository.findAllMessagesAfterDate(chatId, date, sortDir).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
     }
 
@@ -91,8 +92,8 @@ public class ChatService {
         return dtoList;
     }
 
-    public void postMessageToChat(Message message) {
-        messageRepository.saveAndFlush(message);
+    public Message postMessageToChat(Message message) {
+        return messageRepository.saveAndFlush(message);
     }
 
     public void deleteChatById(UUID id) {
