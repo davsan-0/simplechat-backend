@@ -12,6 +12,11 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Represents a Chat between Users
+ *
+ * @author David Sandström
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name="chat")
@@ -86,14 +91,6 @@ public class Chat {
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
-
-   /* public Message getLatestMessage() {
-        return latestMessage;
-    }
-
-    public void setLatestMessage(Message latestMessage) {
-        this.latestMessage = latestMessage;
-    }*/
 
     /**
      * Adds a user as a participant to this chat

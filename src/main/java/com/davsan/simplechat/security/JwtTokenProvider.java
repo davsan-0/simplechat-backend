@@ -29,18 +29,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 public class JwtTokenProvider {
 
-    /**
-     * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a
-     * microservices environment, this key would be kept on a config-server.
-     */
     @Value("${spring.security.jwt.token.secret-key}")
     private String secretKey;
 
     @Value("${spring.security.jwt.token.expire-length}")
     private long validityInMilliseconds;
-
-//    @Autowired
-//    private MyUserDetails myUserDetails;
 
     @Autowired
     private UserService userService;
@@ -69,26 +62,17 @@ public class JwtTokenProvider {
 
         return wrapper;
     }
-
-//    public Authentication getAuthentication(String token) {
-//        UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
-//        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//    }
-//
-
     public Authentication getAuthentication(String token) {
         UUID id = getId(token);
         User user = userService.findById(id);
-        //System.out.println(user.getChats());
-        //UserDTO userDto = Mapper.UserToDTO(user);
-        List<Role> list = new ArrayList<>(); // TEMP
-        list.add(Role.ROLE_CLIENT); // TEMP
+        List<Role> list = new ArrayList<>(); // TODO: TEMP FIX
+        list.add(Role.ROLE_CLIENT); // TODO: TEMP FIX
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getId(), "", list);
         return auth;
     }
 
     public UUID getId(String token) {
-        return UUID.fromString(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        return UUID.fromString(Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -101,7 +85,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Expired or invalid JWT Token");

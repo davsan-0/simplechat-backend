@@ -47,10 +47,7 @@ public class AuthController {
             transport = GoogleNetHttpTransport.newTrustedTransport();
 
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(GoogleNetHttpTransport.newTrustedTransport(), jacksonFactory)
-                    // Specify the CLIENT_ID of the app that accesses the backend:
                     .setAudience(Collections.singletonList(CLIENT_ID))
-                    // Or, if multiple clients access the backend:
-                    //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
                     .build();
 
             GoogleIdToken idToken = verifier.verify(tokenString);
@@ -70,27 +67,6 @@ public class AuthController {
                     userEntity = userService.saveUser(userEntity);
                 }
 
-                //System.out.println("User ID: " + userId);
-
-                // Get profile information from payload
-//                String email = payload.getEmail();
-//                boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-//                String name = (String) payload.get("name");
-//                String pictureUrl = (String) payload.get("picture");
-//                String locale = (String) payload.get("locale");
-//                String familyName = (String) payload.get("family_name");
-//                String givenName = (String) payload.get("given_name");
-
-                // Use or store profile information
-
-                // ...
-
-//                System.out.println(email);
-//                System.out.println(name);
-//                System.out.println(pictureUrl);
-//                System.out.println(locale);
-//                System.out.println(familyName);
-//                System.out.println(givenName);
                 List<Role> roles = new ArrayList<>(); // Todo: TEMP
                 roles.add(Role.ROLE_CLIENT); // Todo: TEMP
 

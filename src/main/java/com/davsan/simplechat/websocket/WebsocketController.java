@@ -11,8 +11,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
@@ -21,8 +19,6 @@ public class WebsocketController {
     @Autowired
     ChatService chatService;
 
-   // @MessageMapping("/chats")
-    //@SendTo("/ws/topic/chats")
     @MessageMapping("/chats/{chatId}/message")
     @SendTo("/ws/topic/chats/{chatId}")
     public MessageDTO receivedMessage(WebsocketMessage message, @DestinationVariable UUID chatId) throws Exception {

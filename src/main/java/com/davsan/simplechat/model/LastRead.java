@@ -11,7 +11,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
+/**
+ * Represents the last read Message that a User has read from a Chat
+ *
+ * @author David Sandström
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "last_read")
@@ -26,6 +30,10 @@ public class LastRead implements Serializable {
     @ManyToOne(cascade = {})
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "message_id", referencedColumnName = "id")
+    private Message message;
 
     @NotNull
     @CreatedDate

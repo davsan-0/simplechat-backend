@@ -9,7 +9,6 @@ import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.repository.ChatRepository;
 import com.davsan.simplechat.repository.MessageRepository;
-import com.davsan.simplechat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;

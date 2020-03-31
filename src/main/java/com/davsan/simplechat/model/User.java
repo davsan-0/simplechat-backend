@@ -1,10 +1,6 @@
 package com.davsan.simplechat.model;
 
-import com.davsan.simplechat.dto.ChatDTO;
-import com.davsan.simplechat.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
