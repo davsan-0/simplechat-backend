@@ -2,12 +2,12 @@ package com.davsan.simplechat.websocket;
 
 import java.util.UUID;
 
-public class WebsocketMessage {
+public class ReadReceiptMessage {
 
     private UUID userId;
-    private String text;
+    private UUID messageId;
 
-    public WebsocketMessage() {
+    public ReadReceiptMessage() {
     }
 
     public UUID getUserId() {
@@ -18,11 +18,11 @@ public class WebsocketMessage {
         this.userId = userId;
     }
 
-    public String getText() {
-        return text;
+    public UUID getMessageId() {
+        return messageId;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setMessageId(UUID messageId) {
+        this.messageId = messageId;
     }
 }

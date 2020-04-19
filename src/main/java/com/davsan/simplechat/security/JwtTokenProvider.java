@@ -6,12 +6,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import com.davsan.simplechat.dto.Mapper;
-import com.davsan.simplechat.dto.UserDTO;
 import com.davsan.simplechat.model.Role;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.service.UserService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

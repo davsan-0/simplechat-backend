@@ -9,6 +9,7 @@ import com.davsan.simplechat.model.Message;
 import com.davsan.simplechat.model.User;
 import com.davsan.simplechat.repository.ChatRepository;
 import com.davsan.simplechat.repository.MessageRepository;
+import com.davsan.simplechat.utils.OnlineUsersMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -32,6 +34,9 @@ public class ChatService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    OnlineUsersMap onlineUsersMap;
 
     public void createChat(SimpleChatDTO chatDTO) {
         Chat chat = new Chat();
@@ -84,6 +89,9 @@ public class ChatService {
         for (Chat chat : chatList) {
             Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(chat.getId());
             ChatDTO dto = Mapper.ChatToDTO(chat, latestMessage);
+            dto.getParticipants().forEach(userDTO -> {
+                if (onlineUsersMap.containsKey(userDTO.getId())) userDTO.setOnline(true);
+            });
 
             dtoList.add(dto);
         }

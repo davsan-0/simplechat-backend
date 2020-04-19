@@ -41,11 +41,8 @@ public class AuthController {
 
     @PostMapping("providertoken")
     public ApiTokenWrapper tokenSignIn(@RequestBody ProviderToken providerToken) {
-        HttpTransport transport;
         String tokenString = providerToken.getToken();
         try {
-            transport = GoogleNetHttpTransport.newTrustedTransport();
-
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(GoogleNetHttpTransport.newTrustedTransport(), jacksonFactory)
                     .setAudience(Collections.singletonList(CLIENT_ID))
                     .build();

@@ -1,3 +1,2 @@
-This project is a Work in Progress!
-
-This is the backend for a Simple Chat Application I'm building.
+# SimpleChat Backend
+This is the backend for my SimpleChat project. Frontend code is located here https://github.com/davsan-0/simplechat-frontend along with more information.

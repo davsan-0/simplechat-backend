@@ -15,6 +15,7 @@ public class UserDTO {
     private String name;
     private String imageUrl;
     private Set<ChatDTO> chats;
+    private boolean online;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -55,6 +56,14 @@ public class UserDTO {
 
     public Set<ChatDTO> getChats() {
         return chats;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public void setChats(Set<ChatDTO> chats) {
