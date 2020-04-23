@@ -54,6 +54,10 @@ public class Message {
     public Message() {
     }
 
+    public Message(@NotNull UUID id) {
+        this.id = id;
+    }
+
     public UUID getId() {
         return id;
     }

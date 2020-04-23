@@ -57,6 +57,10 @@ public class User {
     public User() {
     }
 
+    public User(@NotNull UUID id) {
+        this.id = id;
+    }
+
     public UUID getId() {
         return id;
     }

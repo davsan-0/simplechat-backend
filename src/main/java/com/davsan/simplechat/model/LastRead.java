@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -21,17 +20,10 @@ import java.time.LocalDateTime;
 @Table(name = "last_read")
 public class LastRead implements Serializable {
 
-    @Id
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @EmbeddedId
+    private LastReadIdentity id;
 
-    @Id
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "chat_id", referencedColumnName = "id")
-    private Chat chat;
-
-    @ManyToOne(cascade = {})
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "message_id", referencedColumnName = "id")
     private Message message;
 
@@ -44,5 +36,43 @@ public class LastRead implements Serializable {
     @Column(name = "modified_date")
     private LocalDateTime modifiedAt;
 
+    public LastRead() {
+    }
+
+    public LastRead(LastReadIdentity id) {
+        this.id = id;
+    }
+
+    public LastReadIdentity getId() {
+        return id;
+    }
+
+    public void setId(LastReadIdentity id) {
+        this.id = id;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
 }
 

@@ -16,6 +16,7 @@ public class ChatDTO {
     private String name;
     private Set<UserDTO> participants;
     private MessageDTO latestMessage;
+    private int unreadAmount;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -68,6 +69,14 @@ public class ChatDTO {
 
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+    public int getUnreadAmount() {
+        return unreadAmount;
+    }
+
+    public void setUnreadAmount(int unreadAmount) {
+        this.unreadAmount = unreadAmount;
     }
 
     @Override

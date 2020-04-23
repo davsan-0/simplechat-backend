@@ -48,6 +48,10 @@ public class Chat {
     public Chat() {
     }
 
+    public Chat(@NotNull UUID id) {
+        this.id = id;
+    }
+
     public UUID getId() {
         return id;
     }

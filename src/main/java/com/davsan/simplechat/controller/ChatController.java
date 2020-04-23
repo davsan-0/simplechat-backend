@@ -14,6 +14,7 @@ import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,8 @@ public class ChatController {
         return chatService.findByIdAndReturnDTO(id);
     }
 
-    @GetMapping("{chat_id}/messages")
-    public List<MessageDTO> getMessagesFromChatSinceDate(@PathVariable("chat_id") UUID chatId, @RequestParam(required = false) String since, @RequestParam(required = false) String sort) {
+    @GetMapping("{id}/messages")
+    public List<MessageDTO> getMessagesFromChatSinceDate(@PathVariable("id") UUID chatId, @RequestParam(required = false) String since, @RequestParam(required = false) String sort) {
         Sort.Direction sortDir = Sort.Direction.fromOptionalString(sort).orElse(Sort.Direction.ASC);
 
         if (since == null) {
@@ -54,9 +55,9 @@ public class ChatController {
         chatService.createChat(chat);
     }
 
-    @PostMapping("{chat_id}/messages")
+    @PostMapping("{id}/messages")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postMessageToChat(@PathVariable("chat_id") UUID chatId, @RequestBody MessageDTO message) throws AccessDeniedException {
+    public void postMessageToChat(@PathVariable("id") UUID chatId, @RequestBody MessageDTO message) throws AccessDeniedException {
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Chat chat = chatService.findById(chatId);
@@ -72,9 +73,9 @@ public class ChatController {
         chatService.postMessageToChat(entity);
     }
 
-    @PostMapping("{chat_id}/users")
+    @PostMapping("{id}/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUsersToChat(@PathVariable("chat_id") UUID chatId, @RequestBody List<UUID> userIds) {
+    public void addUsersToChat(@PathVariable("id") UUID chatId, @RequestBody List<UUID> userIds) {
         chatService.addUsersToChat(chatId, userIds);
     }
 
@@ -84,6 +85,13 @@ public class ChatController {
         chatService.deleteChatById(id);
     }
 
+    @PutMapping("{id}/lastmessageread")
+    @ResponseStatus(HttpStatus.OK)
+    public void setLastMessageRead(@PathVariable("id") UUID chatId,  @RequestBody Map<String, UUID> messageid) {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        chatService.setLastRead(userId, chatId, messageid.get("message_id"));
+    }
 
 
    /* @PutMapping

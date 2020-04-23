@@ -16,7 +16,16 @@ import java.util.UUID;
 public interface MessageRepository extends JpaRepository<Message, UUID> {
 
     @Query(value = "SELECT * FROM message WHERE chat_id = ?1 AND created_date > ?2 ORDER BY created_date ?3", nativeQuery = true)
-    Optional<List<Message>> findAllMessagesAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir);
+    Optional<List<Message>> findAllMessagesInChatAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir);
+
+    @Query(value = "SELECT * FROM message WHERE chat_id = ?1 AND created_date > (SELECT created_date FROM message WHERE id = ?2) GROUP BY chat_id ORDER BY created_date", nativeQuery = true)
+    Optional<List<Message>> findAllMessagesInChatAfterMessage(UUID chatId, UUID messageId);
+
+    @Query(value= "SELECT COUNT(*) FROM (SELECT * FROM message WHERE chat_id = ?1 AND author_id != ?2 AND created_date > (SELECT created_date FROM message WHERE id = ?3) ORDER BY created_date) as sq", nativeQuery = true)
+    int countAllMessagesInChatAfterMessageNotIncludingUser(UUID chatId, UUID userId, UUID messageId);
+
+    @Query(value= "SELECT COUNT(*) FROM (SELECT * FROM message WHERE chat_id = ?1 AND author_id != ?2 ORDER BY created_date) as sq", nativeQuery = true)
+    int countAllMessagesInChatNotIncludingUser(UUID chatId, UUID userId);
 
     List<Message> findByChat_id(UUID chatId, Sort sort);
 

@@ -1,13 +1,13 @@
 package com.davsan.simplechat.service;
 
 import com.davsan.simplechat.dto.ChatDTO;
+import com.davsan.simplechat.dto.LastReadDTO;
 import com.davsan.simplechat.dto.Mapper;
 import com.davsan.simplechat.dto.SimpleChatDTO;
 import com.davsan.simplechat.error.ResourceNotFoundException;
-import com.davsan.simplechat.model.Chat;
-import com.davsan.simplechat.model.Message;
-import com.davsan.simplechat.model.User;
+import com.davsan.simplechat.model.*;
 import com.davsan.simplechat.repository.ChatRepository;
+import com.davsan.simplechat.repository.LastReadRespository;
 import com.davsan.simplechat.repository.MessageRepository;
 import com.davsan.simplechat.utils.OnlineUsersMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class ChatService {
@@ -31,6 +28,9 @@ public class ChatService {
 
     @Autowired
     MessageRepository messageRepository;
+
+    @Autowired
+    LastReadRespository lastReadRespository;
 
     @Autowired
     UserService userService;
@@ -76,10 +76,11 @@ public class ChatService {
 
     public List<Message> getMessagesFromChat(UUID chatId, Sort.Direction sortDir) {
         return messageRepository.findByChat_id(chatId, Sort.by(sortDir, "createdAt"));
+
     }
 
     public List<Message> getMessagesFromChatAfterDate(UUID chatId, LocalDateTime date, Sort.Direction sortDir) {
-        return messageRepository.findAllMessagesAfterDate(chatId, date, sortDir).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
+        return messageRepository.findAllMessagesInChatAfterDate(chatId, date, sortDir).orElseThrow(() -> { throw new ResourceNotFoundException("Chat " + chatId.toString() + " not found"); });
     }
 
     public List<ChatDTO> getChatsContainingUser(UUID userId) {
@@ -89,9 +90,17 @@ public class ChatService {
         for (Chat chat : chatList) {
             Message latestMessage = messageRepository.findFirst1ByChat_idOrderByCreatedAtDesc(chat.getId());
             ChatDTO dto = Mapper.ChatToDTO(chat, latestMessage);
+
+            HashMap<UUID, UUID> lastReadMap = new HashMap<>();
+            lastReadRespository.findAllLastReadInChat(chat.getId()).stream().forEach(lr -> lastReadMap.put(lr.getUserId(), lr.getMessageId()));
+
             dto.getParticipants().forEach(userDTO -> {
                 if (onlineUsersMap.containsKey(userDTO.getId())) userDTO.setOnline(true);
+
+                userDTO.setLastReadMessage(lastReadMap.get(userDTO.getId()));
             });
+
+            dto.setUnreadAmount(getNrUnreadMessagesForUser(userId, dto.getId()));
 
             dtoList.add(dto);
         }
@@ -116,6 +125,43 @@ public class ChatService {
         }
 
         chatRepository.saveAndFlush(chat);
+    }
+
+    public int getNrUnreadMessagesForUser(UUID userId, UUID chatId) {
+        User user = new User(userId);
+        Chat chat = new Chat(chatId);
+
+        LastRead latestReadMessage = lastReadRespository.findById(new LastReadIdentity(user, chat)).orElse(null);
+
+        if (latestReadMessage == null) {
+            return messageRepository.countAllMessagesInChatNotIncludingUser(chatId, userId);
+        }
+
+        return messageRepository.countAllMessagesInChatAfterMessageNotIncludingUser(chatId, userId, latestReadMessage.getMessage().getId());
+    }
+
+    public List<Message> getAllUnreadMessagesForUser(UUID userId, UUID chatId) {
+        User user = new User(userId);
+        Chat chat = new Chat(chatId);
+
+        LastRead latestReadMessage = lastReadRespository.findById(new LastReadIdentity(user, chat)).orElse(null);
+
+        if (latestReadMessage == null) {
+            return getMessagesFromChat(chatId, Sort.Direction.ASC);
+        }
+
+        return messageRepository.findAllMessagesInChatAfterMessage(chatId, latestReadMessage.getMessage().getId()).orElse(null);
+    }
+
+    public void setLastRead(UUID userId, UUID chatId, UUID messageId) {
+        User user = new User(userId);
+        Chat chat = new Chat(chatId);
+        LastReadIdentity id = new LastReadIdentity(user, chat);
+
+        LastRead lastRead = lastReadRespository.findById(id).orElse(new LastRead(id));
+        lastRead.setMessage(new Message(messageId));
+
+        lastReadRespository.saveAndFlush(lastRead);
     }
 
     /*public Chat updateChatWithId(UUID id, Chat chat) {

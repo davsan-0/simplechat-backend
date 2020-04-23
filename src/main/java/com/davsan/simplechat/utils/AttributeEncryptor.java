@@ -22,7 +22,7 @@ import java.util.Scanner;
 @Component
 public class AttributeEncryptor implements AttributeConverter<String, String> {
 
-    private static final String FILE_PATH = "src/main/java/com/davsan/simplechat/encryption-key.txt";
+    private static final String FILE_PATH = "./encryption-key.txt";
     private static final String AES = "AES";
     private static String SECRET;
 

@@ -15,6 +15,7 @@ public class UserDTO {
     private String name;
     private String imageUrl;
     private Set<ChatDTO> chats;
+    private UUID lastReadMessage;
     private boolean online;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
@@ -64,6 +65,14 @@ public class UserDTO {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public UUID getLastReadMessage() {
+        return lastReadMessage;
+    }
+
+    public void setLastReadMessage(UUID lastReadMessage) {
+        this.lastReadMessage = lastReadMessage;
     }
 
     public void setChats(Set<ChatDTO> chats) {
